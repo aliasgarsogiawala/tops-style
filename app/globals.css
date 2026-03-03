@@ -17,7 +17,51 @@ body {
   .print-only {
     display: block !important;
   }
+
+  /* Reset page */
+  @page {
+    size: A5 portrait;
+    margin: 6mm 6mm 6mm 6mm;
+  }
+
+  html,
   body {
-    background: white;
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* The root flex layout: hide sidebar, make main fill full width */
+  body > * {
+    display: block !important;
+  }
+
+  /* Target the flex wrapper that holds sidebar + main */
+  .flex.min-h-screen {
+    display: block !important;
+  }
+
+  /* The <main> content area should take full width */
+  main {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Invoice document fills the page */
+  #invoice-doc {
+    width: 100% !important;
+    min-height: auto !important;
+    border: none !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  /* The wrapper div around invoice-doc */
+  #invoice-doc-wrapper {
+    padding: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
   }
 }

@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getInvoices } from "@/lib/storage";
 import { Invoice } from "@/lib/types";
-import { formatCurrency, formatDateTime } from "@/lib/utils";
-import { ArrowLeft, Printer, Gem } from "lucide-react";
+import { formatDate, formatCurrency } from "@/lib/utils";
+import { ArrowLeft, Printer } from "lucide-react";
 import Link from "next/link";
 
 export default function InvoiceDetailPage() {
@@ -22,128 +22,140 @@ export default function InvoiceDetailPage() {
 
   if (!invoice) {
     return (
-      <div className="p-8 text-center text-amber-400">
+      <div className="p-8 text-center text-zinc-400">
         <p>Loading invoice...</p>
       </div>
     );
   }
 
+  const totalBoxes = invoice.items.reduce((s, i) => s + i.box, 0);
+
   return (
-    <div className="p-8 max-w-3xl mx-auto">
-      {/* Actions bar — hidden on print */}
-      <div className="no-print flex items-center justify-between mb-6">
+    <div id="invoice-doc-wrapper" className="p-6 max-w-3xl mx-auto">
+      {/* Actions — hidden on print */}
+      <div className="no-print flex items-center justify-between mb-5">
         <Link
           href="/invoices"
-          className="flex items-center gap-2 text-amber-700 hover:text-amber-900 transition-colors font-medium"
+          className="flex items-center gap-2 text-zinc-700 hover:text-zinc-900 font-medium transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to History
+          <ArrowLeft className="w-4 h-4" /> Back
         </Link>
         <button
           onClick={() => window.print()}
-          className="flex items-center gap-2 bg-amber-800 text-amber-50 px-5 py-2.5 rounded-xl hover:bg-amber-700 transition-colors font-medium shadow-md"
+          className="flex items-center gap-2 bg-zinc-900 text-white px-5 py-2.5 rounded-xl hover:bg-zinc-700 transition-colors font-medium shadow"
         >
           <Printer className="w-4 h-4" />
           Print / Save PDF
         </button>
       </div>
 
-      {/* Invoice Document */}
+      {/* ── INVOICE DOCUMENT ── */}
       <div
-        id="invoice-print"
-        className="bg-white rounded-2xl shadow-sm border border-amber-100 overflow-hidden"
+        id="invoice-doc"
+        className="bg-[#fdfbf0] border border-gray-300 font-serif text-[13px] text-gray-900"
+        style={{ minHeight: "210mm" }}
       >
-        {/* Header */}
-        <div className="bg-gradient-to-r from-amber-900 to-amber-700 text-amber-50 p-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-amber-400 rounded-full flex items-center justify-center">
-                <Gem className="w-6 h-6 text-amber-900" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold">Tops Style</h1>
-                <p className="text-amber-300 text-sm">Fine Jewellery</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-amber-300 text-sm font-medium uppercase tracking-wide">Invoice</p>
-              <p className="text-2xl font-bold mt-1">{invoice.invoiceNumber}</p>
-              <p className="text-amber-300 text-sm mt-1">{formatDateTime(invoice.createdAt)}</p>
-            </div>
+        {/* ── TOP HEADER ── */}
+        <div className="border-b border-gray-400 grid grid-cols-3 items-start px-3 pt-2 pb-2 gap-1">
+          {/* Left: address */}
+          <div className="text-[10px] leading-snug text-gray-600">
+            <p>5th navyug hill road,</p>
+            <p>S/77 Ingalal mansion,</p>
+            <p>sandhurst road, Mumbai.</p>
+          </div>
+
+          {/* Center: date + label */}
+          <div className="text-center">
+            <p className="text-[10px] font-semibold tracking-widest uppercase text-gray-500 mb-0.5">
+              Order and Estimate
+            </p>
+            <p className="text-[11px] font-bold text-gray-700 tracking-wide">
+              {invoice.invoiceNumber}
+            </p>
+            <p className="text-lg font-bold text-gray-800 leading-tight">
+              {formatDate(invoice.createdAt)}
+            </p>
+            <p className="text-[10px] text-gray-500 mt-0.5">
+              DATE:&nbsp;
+              <span className="underline">{formatDate(invoice.createdAt)}</span>
+            </p>
+          </div>
+
+          {/* Right: brand */}
+          <div className="text-right">
+            <p className="text-3xl font-extrabold tracking-tight text-gray-800 leading-none">
+              TOPS STYLE
+            </p>
+            <p className="text-[10px] text-gray-500 mt-0.5">
+              GST NO.&nbsp;27ACIPU7969C1Z2
+            </p>
           </div>
         </div>
 
-        {/* Customer Info */}
-        <div className="p-6 border-b border-amber-100 bg-amber-50">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-xs uppercase tracking-wide text-amber-500 font-semibold mb-1">Bill To</p>
-              <p className="font-semibold text-amber-900 text-lg">
-                {invoice.customerName || "Walk-in Customer"}
-              </p>
-              {invoice.customerPhone && (
-                <p className="text-amber-700 text-sm">{invoice.customerPhone}</p>
-              )}
-            </div>
-          </div>
+        {/* ── PARTY NAME ── */}
+        <div className="border-b border-gray-400 py-1.5 px-3 text-center">
+          <p className="text-base font-bold tracking-wide uppercase">
+            {invoice.customerName || "——"}
+          </p>
+          {invoice.customerPhone && (
+            <p className="text-[11px] text-gray-500">{invoice.customerPhone}</p>
+          )}
         </div>
 
-        {/* Items */}
-        <div className="p-6">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b-2 border-amber-200">
-                <th className="text-left py-2 text-amber-700 font-semibold text-sm pb-3">Code</th>
-                <th className="text-center py-2 text-amber-700 font-semibold text-sm pb-3">Box</th>
-                <th className="text-center py-2 text-amber-700 font-semibold text-sm pb-3">Qty</th>
-                <th className="text-right py-2 text-amber-700 font-semibold text-sm pb-3">Rate</th>
-                <th className="text-right py-2 text-amber-700 font-semibold text-sm pb-3">Amount</th>
+        {/* ── ITEMS TABLE ── */}
+        <table className="w-full border-collapse text-[12px]">
+          <thead>
+            <tr className="border-b border-gray-400 bg-[#f5f0d8]">
+              <th className="border-r border-gray-300 py-1.5 px-2 text-center font-bold w-16">BOX</th>
+              <th className="border-r border-gray-300 py-1.5 px-2 text-center font-bold w-24">ITEM NO</th>
+              <th className="border-r border-gray-300 py-1.5 px-2 text-center font-bold w-16">QTY</th>
+              <th className="border-r border-gray-300 py-1.5 px-2 text-center font-bold w-20">RATE</th>
+              <th className="py-1.5 px-2 text-center font-bold w-24">AMOUNT</th>
+            </tr>
+          </thead>
+          <tbody>
+            {invoice.items.map((item) => (
+              <tr
+                key={item.id}
+                className="border-b border-gray-200"
+              >
+                <td className="border-r border-gray-200 py-1 px-2 text-center">{item.box}</td>
+                <td className="border-r border-gray-200 py-1 px-2 text-center font-mono font-semibold">{item.productCode}</td>
+                <td className="border-r border-gray-200 py-1 px-2 text-center">{item.quantity}</td>
+                <td className="border-r border-gray-200 py-1 px-2 text-right">{item.price.toLocaleString("en-IN")}</td>
+                <td className="py-1 px-2 text-right font-medium">{formatCurrency(item.total)}</td>
               </tr>
-            </thead>
-            <tbody>
-              {invoice.items.map((item, idx) => (
-                <tr
-                  key={item.id}
-                  className={`border-b border-amber-50 ${idx % 2 === 0 ? "" : "bg-amber-50/50"}`}
-                >
-                  <td className="py-3 pr-4">
-                    <span className="font-mono text-sm font-semibold text-amber-800 bg-amber-100 px-2 py-0.5 rounded">
-                      {item.productCode}
-                    </span>
-                  </td>
-                  <td className="py-3 text-center text-amber-700">{item.box}</td>
-                  <td className="py-3 text-center text-amber-700">{item.quantity}</td>
-                  <td className="py-3 text-right text-amber-700">{formatCurrency(item.price)}</td>
-                  <td className="py-3 text-right font-semibold text-amber-900">
-                    {formatCurrency(item.total)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr className="border-t-2 border-amber-200">
-                <td colSpan={4} className="py-3 text-right font-bold text-amber-900 pr-4">
-                  Gross Total
-                </td>
-                <td className="py-3 text-right font-bold text-amber-900 text-lg">
-                  {formatCurrency(invoice.grandTotal)}
-                </td>
+            ))}
+            {/* blank filler rows to fill page — at least 5 empty rows if short */}
+            {Array.from({ length: Math.max(0, 14 - invoice.items.length) }).map((_, i) => (
+              <tr key={`blank-${i}`} className="border-b border-gray-100">
+                <td className="border-r border-gray-100 py-1 px-2">&nbsp;</td>
+                <td className="border-r border-gray-100 py-1 px-2">&nbsp;</td>
+                <td className="border-r border-gray-100 py-1 px-2">&nbsp;</td>
+                <td className="border-r border-gray-100 py-1 px-2">&nbsp;</td>
+                <td className="py-1 px-2">&nbsp;</td>
               </tr>
-            </tfoot>
-          </table>
+            ))}
+          </tbody>
+        </table>
+
+        {/* ── FOOTER ── */}
+        <div className="border-t-2 border-gray-400 flex items-center justify-between px-3 py-2">
+          <p className="font-bold text-[13px]">{totalBoxes}&nbsp;Boxes</p>
+          <p className="text-[11px] font-semibold tracking-wide text-gray-600">
+            *PAYMENT TERMS 10 DAYS
+          </p>
+          <p className="font-bold text-[14px]">
+            ₹&nbsp;{invoice.grandTotal.toLocaleString("en-IN")}
+          </p>
         </div>
 
-        {/* Notes */}
+        {/* notes row if any */}
         {invoice.notes && (
-          <div className="px-6 pb-6">
-            <p className="text-xs uppercase tracking-wide text-amber-500 font-semibold mb-1">Notes</p>
-            <p className="text-amber-700 text-sm">{invoice.notes}</p>
+          <div className="border-t border-gray-200 px-3 py-1.5 text-[11px] text-gray-600 italic">
+            {invoice.notes}
           </div>
         )}
-
-        {/* Footer */}
-        <div className="bg-amber-900 text-amber-300 text-center py-4 text-xs">
-          Thank you for choosing Tops Style Jewellery
-        </div>
       </div>
     </div>
   );

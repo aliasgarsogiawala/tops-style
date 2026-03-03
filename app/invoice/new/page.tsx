@@ -128,8 +128,8 @@ export default function NewInvoicePage() {
   return (
     <div className="p-8 max-w-5xl mx-auto">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-amber-900">New Invoice</h2>
-        <p className="text-amber-700 mt-1">Enter box, code — qty auto-fills (box × 12)</p>
+        <h2 className="text-3xl font-bold text-zinc-900">New Invoice</h2>
+        <p className="text-zinc-700 mt-1">Enter box, code — qty auto-fills (box × 12)</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -137,41 +137,41 @@ export default function NewInvoicePage() {
         <div className="lg:col-span-2 space-y-5">
 
           {/* Customer Info */}
-          <div className="bg-white rounded-2xl shadow-sm border border-amber-100 p-5">
-            <h3 className="font-semibold text-amber-900 mb-4 text-lg">Customer Details</h3>
+          <div className="bg-white rounded-xl shadow-sm border border-zinc-100 p-5">
+            <h3 className="font-semibold text-zinc-900 mb-4 text-lg">Customer Details</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-amber-800 mb-1.5">Name</label>
+                <label className="block text-sm font-medium text-zinc-900 mb-1.5">Name</label>
                 <input
                   type="text"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="Customer name"
-                  className="w-full px-4 py-2.5 rounded-xl border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-400 text-amber-900 placeholder-amber-300"
+                  className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-400 text-zinc-900 placeholder-zinc-300"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-amber-800 mb-1.5">Phone</label>
+                <label className="block text-sm font-medium text-zinc-900 mb-1.5">Phone</label>
                 <input
                   type="tel"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
                   placeholder="Phone number"
-                  className="w-full px-4 py-2.5 rounded-xl border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-400 text-amber-900 placeholder-amber-300"
+                  className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-400 text-zinc-900 placeholder-zinc-300"
                 />
               </div>
             </div>
           </div>
 
           {/* Entry Row */}
-          <div className="bg-white rounded-2xl shadow-sm border border-amber-100 p-5">
-            <h3 className="font-semibold text-amber-900 mb-4 text-lg">Add Item</h3>
+          <div className="bg-white rounded-xl shadow-sm border border-zinc-100 p-5">
+            <h3 className="font-semibold text-zinc-900 mb-4 text-lg">Add Item</h3>
             <div className="relative">
               <div className="flex gap-3 items-end">
 
                 {/* Box */}
                 <div className="w-28">
-                  <label className="block text-xs font-semibold text-amber-600 mb-1.5 uppercase tracking-wide">Box</label>
+                  <label className="block text-xs font-semibold text-zinc-600 mb-1.5 uppercase tracking-wide">Box</label>
                   <input
                     ref={boxInputRef}
                     type="number"
@@ -180,15 +180,15 @@ export default function NewInvoicePage() {
                     onKeyDown={(e) => { if (e.key === "Enter") codeInputRef.current?.focus(); }}
                     placeholder="0"
                     min={1}
-                    className="w-full px-3 py-3 rounded-xl border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-400 text-amber-900 text-center font-semibold"
+                    className="w-full px-3 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-400 text-zinc-900 text-center font-semibold"
                   />
                 </div>
 
                 {/* Code */}
                 <div className="flex-1">
-                  <label className="block text-xs font-semibold text-amber-600 mb-1.5 uppercase tracking-wide">Code</label>
+                  <label className="block text-xs font-semibold text-zinc-600 mb-1.5 uppercase tracking-wide">Code</label>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-400" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
                     <input
                       ref={codeInputRef}
                       type="text"
@@ -196,17 +196,17 @@ export default function NewInvoicePage() {
                       onChange={(e) => setCodeInput(e.target.value)}
                       onKeyDown={(e) => { if (e.key === "Enter") addItem(); }}
                       placeholder="Product code..."
-                      className="w-full pl-10 pr-4 py-3 rounded-xl border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-400 font-mono text-amber-900 placeholder-amber-300 uppercase"
+                      className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-400 font-mono text-zinc-900 placeholder-zinc-300 uppercase"
                     />
                   </div>
                 </div>
 
                 {/* Qty preview */}
                 <div className="w-28">
-                  <label className="block text-xs font-semibold text-amber-600 mb-1.5 uppercase tracking-wide">
-                    Qty <span className="normal-case font-normal text-amber-400">(box×12)</span>
+                  <label className="block text-xs font-semibold text-zinc-600 mb-1.5 uppercase tracking-wide">
+                    Qty <span className="normal-case font-normal text-zinc-400">(box×12)</span>
                   </label>
-                  <div className="w-full px-3 py-3 rounded-xl border border-amber-100 bg-amber-50 text-amber-700 text-center font-semibold">
+                  <div className="w-full px-3 py-3 rounded-xl border border-zinc-100 bg-zinc-50 text-zinc-700 text-center font-semibold">
                     {boxInput && parseInt(boxInput) > 0
                       ? parseInt(boxInput) * PCS_PER_BOX
                       : "—"}
@@ -215,8 +215,8 @@ export default function NewInvoicePage() {
 
                 {/* Rate preview */}
                 <div className="w-32">
-                  <label className="block text-xs font-semibold text-amber-600 mb-1.5 uppercase tracking-wide">Rate</label>
-                  <div className="w-full px-3 py-3 rounded-xl border border-amber-100 bg-amber-50 text-amber-700 text-right font-semibold">
+                  <label className="block text-xs font-semibold text-zinc-600 mb-1.5 uppercase tracking-wide">Rate</label>
+                  <div className="w-full px-3 py-3 rounded-xl border border-zinc-100 bg-zinc-50 text-zinc-700 text-right font-semibold">
                     {foundProduct ? formatCurrency(foundProduct.price) : "—"}
                   </div>
                 </div>
@@ -225,7 +225,7 @@ export default function NewInvoicePage() {
                 <button
                   onClick={() => addItem()}
                   disabled={!foundProduct || !boxInput}
-                  className="px-5 py-3 bg-amber-800 text-amber-50 rounded-xl hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-2 font-medium"
+                  className="px-5 py-3 bg-zinc-900 text-white rounded-xl hover:bg-zinc-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-2 font-medium"
                 >
                   <Plus className="w-4 h-4" />
                   Add
@@ -234,17 +234,17 @@ export default function NewInvoicePage() {
 
               {/* Suggestions */}
               {suggestions.length > 0 && (
-                <div className="absolute z-10 left-[calc(7rem+0.75rem)] right-[calc(7rem+8rem+2*0.75rem+5rem)] mt-1 bg-white border border-amber-200 rounded-xl shadow-lg overflow-hidden">
+                <div className="absolute z-10 left-[calc(7rem+0.75rem)] right-[calc(7rem+8rem+2*0.75rem+5rem)] mt-1 bg-white border border-zinc-200 rounded-xl shadow-lg overflow-hidden">
                   {suggestions.map((s) => (
                     <button
                       key={s.id}
                       onClick={() => { setCodeInput(s.code); setSuggestions([]); codeInputRef.current?.focus(); }}
-                      className="w-full text-left px-4 py-3 hover:bg-amber-50 flex items-center justify-between border-b border-amber-50 last:border-0 transition-colors"
+                      className="w-full text-left px-4 py-3 hover:bg-zinc-50 flex items-center justify-between border-b border-zinc-50 last:border-0 transition-colors"
                     >
-                      <span className="font-mono font-semibold text-amber-800 text-sm bg-amber-100 px-2 py-0.5 rounded">
+                      <span className="font-mono font-semibold text-zinc-900 text-sm bg-zinc-100 px-2 py-0.5 rounded">
                         {s.code}
                       </span>
-                      <span className="font-semibold text-amber-700 text-sm">{formatCurrency(s.price)}</span>
+                      <span className="font-semibold text-zinc-700 text-sm">{formatCurrency(s.price)}</span>
                     </button>
                   ))}
                 </div>
@@ -257,12 +257,12 @@ export default function NewInvoicePage() {
           </div>
 
           {/* Items Table */}
-          <div className="bg-white rounded-2xl shadow-sm border border-amber-100 overflow-hidden">
-            <div className="p-4 border-b border-amber-100">
-              <h3 className="font-semibold text-amber-900 text-lg">
+          <div className="bg-white rounded-xl shadow-sm border border-zinc-100 overflow-hidden">
+            <div className="p-4 border-b border-zinc-100">
+              <h3 className="font-semibold text-zinc-900 text-lg">
                 Bill Items
                 {items.length > 0 && (
-                  <span className="ml-2 bg-amber-100 text-amber-700 text-sm font-medium px-2 py-0.5 rounded-full">
+                  <span className="ml-2 bg-zinc-100 text-zinc-700 text-sm font-medium px-2 py-0.5 rounded-full">
                     {items.length}
                   </span>
                 )}
@@ -271,13 +271,13 @@ export default function NewInvoicePage() {
 
             {items.length === 0 ? (
               <div className="p-12 text-center">
-                <Gem className="w-12 h-12 mx-auto mb-3 text-amber-200" />
-                <p className="font-medium text-amber-400">No items added yet</p>
-                <p className="text-sm mt-1 text-amber-300">Enter box and code above, then press Enter or Add</p>
+                <Gem className="w-12 h-12 mx-auto mb-3 text-zinc-200" />
+                <p className="font-medium text-zinc-400">No items added yet</p>
+                <p className="text-sm mt-1 text-zinc-300">Enter box and code above, then press Enter or Add</p>
               </div>
             ) : (
               <table className="w-full">
-                <thead className="bg-amber-50 text-amber-700 text-sm">
+                <thead className="bg-zinc-50 text-zinc-700 text-sm">
                   <tr>
                     <th className="text-left p-3 font-semibold">Code</th>
                     <th className="text-center p-3 font-semibold">Box</th>
@@ -287,11 +287,11 @@ export default function NewInvoicePage() {
                     <th className="w-10"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-amber-50">
+                <tbody className="divide-y divide-zinc-50">
                   {items.map((item) => (
-                    <tr key={item.id} className="hover:bg-amber-50 transition-colors">
+                    <tr key={item.id} className="hover:bg-zinc-50 transition-colors">
                       <td className="p-3">
-                        <span className="font-mono text-sm bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-semibold">
+                        <span className="font-mono text-sm bg-zinc-100 text-zinc-900 px-2 py-0.5 rounded font-semibold">
                           {item.productCode}
                         </span>
                       </td>
@@ -301,10 +301,10 @@ export default function NewInvoicePage() {
                           value={item.box}
                           onChange={(e) => updateBox(item.id, parseInt(e.target.value) || 1)}
                           min={1}
-                          className="w-16 text-center px-2 py-1 rounded-lg border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-400 text-amber-900 text-sm"
+                          className="w-16 text-center px-2 py-1 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-400 text-zinc-900 text-sm"
                         />
                       </td>
-                      <td className="p-3 text-center text-amber-700 font-medium text-sm">
+                      <td className="p-3 text-center text-zinc-700 font-medium text-sm">
                         {item.quantity}
                       </td>
                       <td className="p-3 text-right">
@@ -314,10 +314,10 @@ export default function NewInvoicePage() {
                           onChange={(e) => updateRate(item.id, parseFloat(e.target.value) || 0)}
                           min={0}
                           step={0.01}
-                          className="w-28 text-right px-2 py-1 rounded-lg border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-400 text-amber-900 text-sm"
+                          className="w-28 text-right px-2 py-1 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-400 text-zinc-900 text-sm"
                         />
                       </td>
-                      <td className="p-3 text-right font-semibold text-amber-800 text-sm">
+                      <td className="p-3 text-right font-semibold text-zinc-900 text-sm">
                         {formatCurrency(item.total)}
                       </td>
                       <td className="p-3 text-center">
@@ -331,12 +331,12 @@ export default function NewInvoicePage() {
                     </tr>
                   ))}
                 </tbody>
-                <tfoot className="bg-amber-50 border-t-2 border-amber-200">
+                <tfoot className="bg-zinc-50 border-t-2 border-zinc-200">
                   <tr>
-                    <td colSpan={4} className="p-3 text-right font-bold text-amber-900">
+                    <td colSpan={4} className="p-3 text-right font-bold text-zinc-900">
                       Gross Total
                     </td>
-                    <td className="p-3 text-right font-bold text-amber-900 text-base">
+                    <td className="p-3 text-right font-bold text-zinc-900 text-base">
                       {formatCurrency(grossTotal)}
                     </td>
                     <td></td>
@@ -349,43 +349,43 @@ export default function NewInvoicePage() {
 
         {/* Right column - Summary */}
         <div>
-          <div className="bg-white rounded-2xl shadow-sm border border-amber-100 p-5 sticky top-8">
-            <h3 className="font-semibold text-amber-900 text-lg mb-4">Summary</h3>
+          <div className="bg-white rounded-xl shadow-sm border border-zinc-100 p-5 sticky top-8">
+            <h3 className="font-semibold text-zinc-900 text-lg mb-4">Summary</h3>
 
             <div className="space-y-2 text-sm mb-4">
-              <div className="flex justify-between text-amber-700">
+              <div className="flex justify-between text-zinc-700">
                 <span>Total Items</span>
                 <span className="font-medium">{items.length}</span>
               </div>
-              <div className="flex justify-between text-amber-700">
+              <div className="flex justify-between text-zinc-700">
                 <span>Total Boxes</span>
                 <span className="font-medium">{items.reduce((s, i) => s + i.box, 0)}</span>
               </div>
-              <div className="flex justify-between text-amber-700">
+              <div className="flex justify-between text-zinc-700">
                 <span>Total Qty (pcs)</span>
                 <span className="font-medium">{items.reduce((s, i) => s + i.quantity, 0)}</span>
               </div>
-              <div className="border-t border-amber-100 pt-2 flex justify-between font-bold text-amber-900 text-base">
+              <div className="border-t border-zinc-100 pt-2 flex justify-between font-bold text-zinc-900 text-base">
                 <span>Gross Total</span>
                 <span>{formatCurrency(grossTotal)}</span>
               </div>
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-amber-800 mb-1.5">Notes</label>
+              <label className="block text-sm font-medium text-zinc-900 mb-1.5">Notes</label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Add any notes..."
                 rows={3}
-                className="w-full px-3 py-2 rounded-xl border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-400 text-amber-900 placeholder-amber-300 text-sm resize-none"
+                className="w-full px-3 py-2 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-400 text-zinc-900 placeholder-zinc-300 text-sm resize-none"
               />
             </div>
 
             <button
               onClick={handleSave}
               disabled={items.length === 0 || saved}
-              className="w-full flex items-center justify-center gap-2 bg-amber-800 text-amber-50 py-3 rounded-xl hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-semibold text-sm"
+              className="w-full flex items-center justify-center gap-2 bg-zinc-900 text-white py-3 rounded-xl hover:bg-zinc-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-semibold text-sm"
             >
               {saved ? (
                 <><CheckCircle className="w-4 h-4" /> Saved! Redirecting...</>
