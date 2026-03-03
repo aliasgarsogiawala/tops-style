@@ -93,8 +93,9 @@ export default function InvoiceDetailPage() {
             <thead>
               <tr className="border-b-2 border-amber-200">
                 <th className="text-left py-2 text-amber-700 font-semibold text-sm pb-3">Code</th>
+                <th className="text-center py-2 text-amber-700 font-semibold text-sm pb-3">Box</th>
                 <th className="text-center py-2 text-amber-700 font-semibold text-sm pb-3">Qty</th>
-                <th className="text-right py-2 text-amber-700 font-semibold text-sm pb-3">Unit Price</th>
+                <th className="text-right py-2 text-amber-700 font-semibold text-sm pb-3">Rate</th>
                 <th className="text-right py-2 text-amber-700 font-semibold text-sm pb-3">Amount</th>
               </tr>
             </thead>
@@ -109,6 +110,7 @@ export default function InvoiceDetailPage() {
                       {item.productCode}
                     </span>
                   </td>
+                  <td className="py-3 text-center text-amber-700">{item.box}</td>
                   <td className="py-3 text-center text-amber-700">{item.quantity}</td>
                   <td className="py-3 text-right text-amber-700">{formatCurrency(item.price)}</td>
                   <td className="py-3 text-right font-semibold text-amber-900">
@@ -117,39 +119,17 @@ export default function InvoiceDetailPage() {
                 </tr>
               ))}
             </tbody>
+            <tfoot>
+              <tr className="border-t-2 border-amber-200">
+                <td colSpan={4} className="py-3 text-right font-bold text-amber-900 pr-4">
+                  Gross Total
+                </td>
+                <td className="py-3 text-right font-bold text-amber-900 text-lg">
+                  {formatCurrency(invoice.grandTotal)}
+                </td>
+              </tr>
+            </tfoot>
           </table>
-        </div>
-
-        {/* Totals */}
-        <div className="px-6 pb-6">
-          <div className="ml-auto w-64 space-y-2">
-            <div className="flex justify-between text-amber-700 text-sm">
-              <span>Subtotal</span>
-              <span>{formatCurrency(invoice.subtotal)}</span>
-            </div>
-            {invoice.discount > 0 && (
-              <div className="flex justify-between text-green-600 text-sm">
-                <span>
-                  Discount{" "}
-                  {invoice.discountType === "percent"
-                    ? `(${invoice.discount}%)`
-                    : ""}
-                </span>
-                <span>
-                  -{" "}
-                  {formatCurrency(
-                    invoice.discountType === "percent"
-                      ? (invoice.subtotal * invoice.discount) / 100
-                      : invoice.discount
-                  )}
-                </span>
-              </div>
-            )}
-            <div className="flex justify-between font-bold text-amber-900 text-lg pt-2 border-t-2 border-amber-200">
-              <span>Grand Total</span>
-              <span>{formatCurrency(invoice.grandTotal)}</span>
-            </div>
-          </div>
         </div>
 
         {/* Notes */}

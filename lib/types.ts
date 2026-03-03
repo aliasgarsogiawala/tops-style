@@ -8,9 +8,10 @@ export interface Product {
 export interface InvoiceItem {
   id: string;
   productCode: string;
-  quantity: number;
-  price: number;
-  total: number;
+  box: number;       // entered by user
+  quantity: number;  // box × 12
+  price: number;     // unit price (rate)
+  total: number;     // qty × price
 }
 
 export interface Invoice {
