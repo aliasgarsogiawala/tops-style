@@ -5,15 +5,7 @@ import { useRouter } from "next/navigation";
 import { getProductByCode, getProducts, addInvoice } from "@/lib/storage";
 import { formatCurrency } from "@/lib/utils";
 import { Product, InvoiceItem } from "@/lib/types";
-import {
-  Plus,
-  Trash2,
-  Search,
-  ArrowRight,
-  CheckCircle,
-  X,
-  Gem,
-} from "lucide-react";
+import { Plus, Search, ArrowRight, CheckCircle, X, Gem } from "lucide-react";
 
 export default function NewInvoicePage() {
   const router = useRouter();
@@ -50,7 +42,6 @@ export default function NewInvoicePage() {
       setSuggestions([]);
       return;
     }
-    // Exact match
     const exact = getProductByCode(val);
     if (exact) {
       setFoundProduct(exact);
@@ -59,10 +50,9 @@ export default function NewInvoicePage() {
     } else {
       setFoundProduct(null);
       setCodeError("");
-      // Partial suggestions
-      const sugg = allProducts.filter((p) =>
-        p.code.startsWith(val) || p.name.toLowerCase().includes(val.toLowerCase())
-      ).slice(0, 5);
+      const sugg = allProducts
+        .filter((p) => p.code.startsWith(val))
+        .slice(0, 5);
       setSuggestions(sugg);
     }
   }, [codeInput, allProducts]);
@@ -85,7 +75,6 @@ export default function NewInvoicePage() {
       const newItem: InvoiceItem = {
         id: crypto.randomUUID(),
         productCode: p.code,
-        productName: p.name,
         quantity: qty,
         price: p.price,
         total: qty * p.price,
@@ -143,7 +132,6 @@ export default function NewInvoicePage() {
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
-      {/* Header */}
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-amber-900">New Invoice</h2>
         <p className="text-amber-700 mt-1">Enter product codes to build the bill</p>
@@ -191,10 +179,8 @@ export default function NewInvoicePage() {
                     type="text"
                     value={codeInput}
                     onChange={(e) => setCodeInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") addItem();
-                    }}
-                    placeholder="Enter product code (e.g. RG001)..."
+                    onKeyDown={(e) => { if (e.key === "Enter") addItem(); }}
+                    placeholder="Enter product code..."
                     className="w-full pl-10 pr-4 py-3 rounded-xl border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-400 font-mono text-amber-900 placeholder-amber-300 uppercase"
                   />
                 </div>
@@ -219,13 +205,9 @@ export default function NewInvoicePage() {
               {/* Product found preview */}
               {foundProduct && (
                 <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-xl flex items-center justify-between">
-                  <div>
-                    <span className="font-mono font-semibold text-green-800 text-sm bg-green-100 px-2 py-0.5 rounded mr-2">
-                      {foundProduct.code}
-                    </span>
-                    <span className="text-green-700 font-medium">{foundProduct.name}</span>
-                    <span className="text-green-600 text-sm ml-2">({foundProduct.category})</span>
-                  </div>
+                  <span className="font-mono font-semibold text-green-800 text-sm bg-green-100 px-2 py-0.5 rounded">
+                    {foundProduct.code}
+                  </span>
                   <span className="font-bold text-green-800">{formatCurrency(foundProduct.price)}</span>
                 </div>
               )}
@@ -236,19 +218,12 @@ export default function NewInvoicePage() {
                   {suggestions.map((s) => (
                     <button
                       key={s.id}
-                      onClick={() => {
-                        setCodeInput(s.code);
-                        setSuggestions([]);
-                      }}
+                      onClick={() => { setCodeInput(s.code); setSuggestions([]); }}
                       className="w-full text-left px-4 py-3 hover:bg-amber-50 flex items-center justify-between border-b border-amber-50 last:border-0 transition-colors"
                     >
-                      <div>
-                        <span className="font-mono font-semibold text-amber-800 text-sm bg-amber-100 px-2 py-0.5 rounded mr-2">
-                          {s.code}
-                        </span>
-                        <span className="text-amber-900">{s.name}</span>
-                        <span className="text-amber-500 text-xs ml-2">{s.category}</span>
-                      </div>
+                      <span className="font-mono font-semibold text-amber-800 text-sm bg-amber-100 px-2 py-0.5 rounded">
+                        {s.code}
+                      </span>
                       <span className="font-semibold text-amber-700">{formatCurrency(s.price)}</span>
                     </button>
                   ))}
@@ -263,7 +238,7 @@ export default function NewInvoicePage() {
 
           {/* Items Table */}
           <div className="bg-white rounded-2xl shadow-sm border border-amber-100 overflow-hidden">
-            <div className="p-4 border-b border-amber-100 flex items-center justify-between">
+            <div className="p-4 border-b border-amber-100">
               <h3 className="font-semibold text-amber-900 text-lg">
                 Bill Items
                 {items.length > 0 && (
@@ -275,19 +250,18 @@ export default function NewInvoicePage() {
             </div>
 
             {items.length === 0 ? (
-              <div className="p-12 text-center text-amber-300">
-                <Gem className="w-12 h-12 mx-auto mb-3 opacity-40" />
+              <div className="p-12 text-center">
+                <Gem className="w-12 h-12 mx-auto mb-3 text-amber-200" />
                 <p className="font-medium text-amber-400">No items added yet</p>
-                <p className="text-sm mt-1 text-amber-300">Enter a product code above and press Enter or Add</p>
+                <p className="text-sm mt-1 text-amber-300">Enter a product code above and press Enter</p>
               </div>
             ) : (
               <table className="w-full">
                 <thead className="bg-amber-50 text-amber-700 text-sm">
                   <tr>
                     <th className="text-left p-3 font-semibold">Code</th>
-                    <th className="text-left p-3 font-semibold">Product</th>
                     <th className="text-center p-3 font-semibold w-24">Qty</th>
-                    <th className="text-right p-3 font-semibold w-32">Price</th>
+                    <th className="text-right p-3 font-semibold w-32">Unit Price</th>
                     <th className="text-right p-3 font-semibold w-32">Total</th>
                     <th className="w-10"></th>
                   </tr>
@@ -300,7 +274,6 @@ export default function NewInvoicePage() {
                           {item.productCode}
                         </span>
                       </td>
-                      <td className="p-3 text-amber-900 font-medium text-sm">{item.productName}</td>
                       <td className="p-3 text-center">
                         <input
                           type="number"
@@ -340,8 +313,7 @@ export default function NewInvoicePage() {
         </div>
 
         {/* Right column - Summary */}
-        <div className="space-y-5">
-          {/* Bill Summary */}
+        <div>
           <div className="bg-white rounded-2xl shadow-sm border border-amber-100 p-5 sticky top-8">
             <h3 className="font-semibold text-amber-900 text-lg mb-4">Bill Summary</h3>
 
@@ -351,7 +323,6 @@ export default function NewInvoicePage() {
                 <span className="font-medium">{formatCurrency(subtotal)}</span>
               </div>
 
-              {/* Discount */}
               <div>
                 <label className="block text-amber-700 mb-1.5">Discount</label>
                 <div className="flex gap-2">
@@ -387,7 +358,6 @@ export default function NewInvoicePage() {
               </div>
             </div>
 
-            {/* Notes */}
             <div className="mt-4">
               <label className="block text-sm font-medium text-amber-800 mb-1.5">Notes</label>
               <textarea
@@ -405,13 +375,9 @@ export default function NewInvoicePage() {
               className="mt-4 w-full flex items-center justify-center gap-2 bg-amber-800 text-amber-50 py-3 rounded-xl hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-semibold text-sm"
             >
               {saved ? (
-                <>
-                  <CheckCircle className="w-4 h-4" /> Saved! Redirecting...
-                </>
+                <><CheckCircle className="w-4 h-4" /> Saved! Redirecting...</>
               ) : (
-                <>
-                  Save Invoice <ArrowRight className="w-4 h-4" />
-                </>
+                <>Save Invoice <ArrowRight className="w-4 h-4" /></>
               )}
             </button>
           </div>

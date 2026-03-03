@@ -93,9 +93,8 @@ export default function InvoiceDetailPage() {
             <thead>
               <tr className="border-b-2 border-amber-200">
                 <th className="text-left py-2 text-amber-700 font-semibold text-sm pb-3">Code</th>
-                <th className="text-left py-2 text-amber-700 font-semibold text-sm pb-3">Product</th>
                 <th className="text-center py-2 text-amber-700 font-semibold text-sm pb-3">Qty</th>
-                <th className="text-right py-2 text-amber-700 font-semibold text-sm pb-3">Rate</th>
+                <th className="text-right py-2 text-amber-700 font-semibold text-sm pb-3">Unit Price</th>
                 <th className="text-right py-2 text-amber-700 font-semibold text-sm pb-3">Amount</th>
               </tr>
             </thead>
@@ -110,7 +109,6 @@ export default function InvoiceDetailPage() {
                       {item.productCode}
                     </span>
                   </td>
-                  <td className="py-3 text-amber-900">{item.productName}</td>
                   <td className="py-3 text-center text-amber-700">{item.quantity}</td>
                   <td className="py-3 text-right text-amber-700">{formatCurrency(item.price)}</td>
                   <td className="py-3 text-right font-semibold text-amber-900">

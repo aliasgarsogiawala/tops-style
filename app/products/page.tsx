@@ -9,36 +9,14 @@ import {
 } from "@/lib/storage";
 import { Product } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
-import {
-  Plus,
-  Pencil,
-  Trash2,
-  Search,
-  X,
-  Check,
-  Package,
-} from "lucide-react";
-
-const CATEGORIES = [
-  "Ring",
-  "Necklace",
-  "Earring",
-  "Bracelet",
-  "Bangle",
-  "Chain",
-  "Pendant",
-  "Mangalsutra",
-  "Other",
-];
+import { Plus, Pencil, Trash2, Search, X, Check, Package } from "lucide-react";
 
 interface FormState {
   code: string;
-  name: string;
   price: string;
-  category: string;
 }
 
-const emptyForm: FormState = { code: "", name: "", price: "", category: "Other" };
+const emptyForm: FormState = { code: "", price: "" };
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -52,11 +30,8 @@ export default function ProductsPage() {
   const load = () => setProducts(getProducts());
   useEffect(() => load(), []);
 
-  const filtered = products.filter(
-    (p) =>
-      p.code.toLowerCase().includes(search.toLowerCase()) ||
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.category.toLowerCase().includes(search.toLowerCase())
+  const filtered = products.filter((p) =>
+    p.code.toLowerCase().includes(search.toLowerCase())
   );
 
   function openNew() {
@@ -67,7 +42,7 @@ export default function ProductsPage() {
   }
 
   function openEdit(p: Product) {
-    setForm({ code: p.code, name: p.name, price: String(p.price), category: p.category });
+    setForm({ code: p.code, price: String(p.price) });
     setEditId(p.id);
     setError("");
     setShowForm(true);
@@ -75,20 +50,18 @@ export default function ProductsPage() {
 
   function handleSave() {
     if (!form.code.trim()) { setError("Product code is required"); return; }
-    if (!form.name.trim()) { setError("Product name is required"); return; }
     const price = parseFloat(form.price);
     if (isNaN(price) || price < 0) { setError("Enter a valid price"); return; }
 
-    // Check duplicate code
     const existing = products.find(
       (p) => p.code.toLowerCase() === form.code.trim().toLowerCase() && p.id !== editId
     );
     if (existing) { setError("Product code already exists"); return; }
 
     if (editId) {
-      updateProduct(editId, { code: form.code.trim().toUpperCase(), name: form.name.trim(), price, category: form.category });
+      updateProduct(editId, { code: form.code.trim().toUpperCase(), price });
     } else {
-      addProduct({ code: form.code.trim().toUpperCase(), name: form.name.trim(), price, category: form.category });
+      addProduct({ code: form.code.trim().toUpperCase(), price });
     }
     load();
     setShowForm(false);
@@ -124,7 +97,7 @@ export default function ProductsPage() {
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-400" />
         <input
           type="text"
-          placeholder="Search by code, name or category..."
+          placeholder="Search by code..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-11 pr-4 py-3 rounded-xl border border-amber-200 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400 text-amber-900 placeholder-amber-300"
@@ -154,9 +127,7 @@ export default function ProductsPage() {
             <thead className="bg-amber-50 border-b border-amber-100">
               <tr>
                 <th className="text-left p-4 text-amber-700 font-semibold text-sm">Code</th>
-                <th className="text-left p-4 text-amber-700 font-semibold text-sm">Name</th>
-                <th className="text-left p-4 text-amber-700 font-semibold text-sm">Category</th>
-                <th className="text-right p-4 text-amber-700 font-semibold text-sm">Price</th>
+                <th className="text-right p-4 text-amber-700 font-semibold text-sm">Unit Price</th>
                 <th className="text-right p-4 text-amber-700 font-semibold text-sm">Actions</th>
               </tr>
             </thead>
@@ -168,8 +139,6 @@ export default function ProductsPage() {
                       {p.code}
                     </span>
                   </td>
-                  <td className="p-4 text-amber-900 font-medium">{p.name}</td>
-                  <td className="p-4 text-amber-600 text-sm">{p.category}</td>
                   <td className="p-4 text-right font-semibold text-amber-800">
                     {formatCurrency(p.price)}
                   </td>
@@ -201,7 +170,7 @@ export default function ProductsPage() {
       {/* Add/Edit Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm">
             <div className="flex items-center justify-between p-6 border-b border-amber-100">
               <h3 className="text-xl font-bold text-amber-900">
                 {editId ? "Edit Product" : "Add New Product"}
@@ -230,41 +199,14 @@ export default function ProductsPage() {
                   value={form.code}
                   onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
                   placeholder="e.g. RG001"
+                  autoFocus
                   className="w-full px-4 py-2.5 rounded-xl border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-400 font-mono text-amber-900"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-amber-800 mb-1.5">
-                  Product Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="e.g. Gold Ring 22K"
-                  className="w-full px-4 py-2.5 rounded-xl border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-400 text-amber-900"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-amber-800 mb-1.5">
-                  Category
-                </label>
-                <select
-                  value={form.category}
-                  onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-400 text-amber-900 bg-white"
-                >
-                  {CATEGORIES.map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-amber-800 mb-1.5">
-                  Price (₹) <span className="text-red-500">*</span>
+                  Unit Price (₹) <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="number"
@@ -273,6 +215,7 @@ export default function ProductsPage() {
                   placeholder="0.00"
                   min="0"
                   step="0.01"
+                  onKeyDown={(e) => e.key === "Enter" && handleSave()}
                   className="w-full px-4 py-2.5 rounded-xl border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-400 text-amber-900"
                 />
               </div>
@@ -297,13 +240,13 @@ export default function ProductsPage() {
         </div>
       )}
 
-      {/* Delete Confirm Modal */}
+      {/* Delete Confirm */}
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
             <h3 className="text-lg font-bold text-amber-900 mb-2">Delete Product?</h3>
             <p className="text-amber-600 text-sm mb-6">
-              This action cannot be undone. The product will be permanently removed.
+              This action cannot be undone.
             </p>
             <div className="flex gap-3">
               <button

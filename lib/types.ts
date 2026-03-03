@@ -1,16 +1,13 @@
 export interface Product {
   id: string;
   code: string;
-  name: string;
   price: number;
-  category: string;
   createdAt: string;
 }
 
 export interface InvoiceItem {
   id: string;
   productCode: string;
-  productName: string;
   quantity: number;
   price: number;
   total: number;
