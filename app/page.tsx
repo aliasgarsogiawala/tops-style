@@ -4,11 +4,12 @@ import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
+import { ConvexInvoice, ConvexProduct } from "@/lib/types";
 import { Package, FileText, IndianRupee, TrendingUp, Plus, ArrowRight } from "lucide-react";
 
 export default function Dashboard() {
-  const products = useQuery(api.products.list);
-  const invoices = useQuery(api.invoices.list);
+  const products = useQuery(api.products.list) as ConvexProduct[] | undefined;
+  const invoices = useQuery(api.invoices.list) as ConvexInvoice[] | undefined;
 
   const loading = products === undefined || invoices === undefined;
 

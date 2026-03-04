@@ -15,7 +15,9 @@ interface FormState {
 const emptyForm: FormState = { code: "", price: "" };
 
 export default function ProductsPage() {
-  const products = useQuery(api.products.list) ?? [];
+  const rawProducts = useQuery(api.products.list);
+  const products = (rawProducts ?? []) as Array<{ _id: Id<"products">; code: string; price: number }>;
+
   const addProduct = useMutation(api.products.add);
   const updateProduct = useMutation(api.products.update);
   const removeProduct = useMutation(api.products.remove);
@@ -38,7 +40,7 @@ export default function ProductsPage() {
     setShowForm(true);
   }
 
-  function openEdit(p: (typeof products)[0]) {
+  function openEdit(p: { _id: Id<"products">; code: string; price: number }) {
     setForm({ code: p.code, price: String(p.price) });
     setEditId(p._id);
     setError("");
@@ -141,7 +143,7 @@ export default function ProductsPage() {
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => openEdit(p)}
-                        className="p-2 text-white0 hover:text-zinc-700 hover:bg-zinc-100 rounded-lg transition-colors"
+                        className="p-2 hover:text-zinc-700 hover:bg-zinc-100 rounded-lg transition-colors"
                         title="Edit"
                       >
                         <Pencil className="w-4 h-4" />
@@ -240,9 +242,7 @@ export default function ProductsPage() {
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
             <h3 className="text-lg font-bold text-zinc-900 mb-2">Delete Product?</h3>
-            <p className="text-zinc-600 text-sm mb-6">
-              This action cannot be undone.
-            </p>
+            <p className="text-zinc-600 text-sm mb-6">This action cannot be undone.</p>
             <div className="flex gap-3">
               <button
                 onClick={() => setDeleteConfirm(null)}

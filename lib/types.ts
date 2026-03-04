@@ -5,6 +5,28 @@ export interface Product {
   createdAt: string;
 }
 
+// Convex document shapes (used for type-casting query results)
+export interface ConvexProduct {
+  _id: string;
+  _creationTime: number;
+  code: string;
+  price: number;
+}
+
+export interface ConvexInvoice {
+  _id: string;
+  _creationTime: number;
+  invoiceNumber: string;
+  customerName: string;
+  customerPhone: string;
+  items: InvoiceItem[];
+  subtotal: number;
+  discount: number;
+  discountType: "flat" | "percent";
+  grandTotal: number;
+  notes: string;
+}
+
 export interface InvoiceItem {
   id: string;
   productCode: string;

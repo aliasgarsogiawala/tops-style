@@ -6,6 +6,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
+import { ConvexInvoice } from "@/lib/types";
 import {
   Search,
   FileText,
@@ -16,11 +17,11 @@ import {
 } from "lucide-react";
 
 export default function InvoicesPage() {
-  const invoices = useQuery(api.invoices.list) ?? [];
+  const invoices: ConvexInvoice[] = (useQuery(api.invoices.list) ?? []) as ConvexInvoice[];
   const removeInvoice = useMutation(api.invoices.remove);
 
   const [search, setSearch] = useState("");
-  const [deleteConfirm, setDeleteConfirm] = useState<Id<"invoices"> | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   const filtered = invoices.filter(
     (inv) =>
@@ -29,8 +30,8 @@ export default function InvoicesPage() {
       inv.customerPhone.includes(search)
   );
 
-  async function handleDelete(id: Id<"invoices">) {
-    await removeInvoice({ id });
+  async function handleDelete(id: string) {
+    await removeInvoice({ id: id as Id<"invoices"> });
     setDeleteConfirm(null);
   }
 

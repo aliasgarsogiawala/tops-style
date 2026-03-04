@@ -6,6 +6,8 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { formatCurrency } from "@/lib/utils";
 import { InvoiceItem } from "@/lib/types";
+
+type Product = { _id: string; code: string; price: number };
 import { Plus, Search, ArrowRight, CheckCircle, X, Gem } from "lucide-react";
 
 const PCS_PER_BOX = 12;
@@ -15,7 +17,8 @@ export default function NewInvoicePage() {
   const boxInputRef = useRef<HTMLInputElement>(null);
   const codeInputRef = useRef<HTMLInputElement>(null);
 
-  const allProducts = useQuery(api.products.list) ?? [];
+  const rawProducts = useQuery(api.products.list);
+  const allProducts: Product[] = (rawProducts ?? []) as Product[];
   const addInvoice = useMutation(api.invoices.add);
 
   const [customerName, setCustomerName] = useState("");
