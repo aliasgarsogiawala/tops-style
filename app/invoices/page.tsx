@@ -92,7 +92,6 @@ export default function InvoicesPage() {
             <thead className="bg-zinc-50 border-b border-zinc-100">
               <tr>
                 <th className="text-left p-4 text-zinc-700 font-semibold text-sm">Invoice #</th>
-                <th className="text-left p-4 text-zinc-700 font-semibold text-sm">Customer</th>
                 <th className="text-left p-4 text-zinc-700 font-semibold text-sm">Date</th>
                 <th className="text-center p-4 text-zinc-700 font-semibold text-sm">Items</th>
                 <th className="text-right p-4 text-zinc-700 font-semibold text-sm">Amount</th>
@@ -106,14 +105,6 @@ export default function InvoicesPage() {
                     <span className="font-mono font-semibold text-zinc-900 bg-zinc-100 px-2.5 py-1 rounded-lg text-sm">
                       {inv.invoiceNumber}
                     </span>
-                  </td>
-                  <td className="p-4">
-                    <p className="font-medium text-zinc-900">
-                      {inv.customerName || "Walk-in Customer"}
-                    </p>
-                    {inv.customerPhone && (
-                      <p className="text-xs text-white0">{inv.customerPhone}</p>
-                    )}
                   </td>
                   <td className="p-4 text-zinc-700 text-sm">{formatDateTime(inv.createdAt)}</td>
                   <td className="p-4 text-center text-zinc-700 text-sm">{inv.items.length}</td>
