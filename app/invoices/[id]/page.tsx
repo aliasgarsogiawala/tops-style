@@ -51,7 +51,8 @@ export default function InvoiceDetailPage() {
       body > div { display: block !important; min-height: 0 !important; }
       main { display: block !important; width: 100% !important; max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
       #invoice-doc-wrapper { padding: 0 !important; max-width: 100% !important; margin: 0 !important; }
-      #invoice-doc { width: 100% !important; min-height: 0 !important; border: none !important; box-shadow: none !important; font-family: "Tempus Sans ITC", "TempusSansITC", "Segoe UI", "Trebuchet MS", "Gill Sans", sans-serif !important; }
+      #invoice-doc { width: 100% !important; min-height: calc(297mm - 12mm) !important; border: none !important; box-shadow: none !important; font-family: "Tempus Sans ITC", "TempusSansITC", "Segoe UI", "Trebuchet MS", "Gill Sans", sans-serif !important; display: flex !important; flex-direction: column !important; }
+      #invoice-doc table { flex: 1 1 auto !important; }
     `;
     document.head.appendChild(style);
 
@@ -88,7 +89,8 @@ export default function InvoiceDetailPage() {
       {/* ── INVOICE DOCUMENT ── */}
       <div
         id="invoice-doc"
-        className="bg-[#fdfbf0] border border-gray-300 font-tempus text-[13px] text-gray-900"
+        className="bg-[#fdfbf0] border border-gray-300 font-tempus text-[13px] text-gray-900 flex flex-col"
+        style={{ minHeight: "257mm" }}
       >
         {/* ── TOP HEADER ── */}
         <div className="border-b border-gray-400 grid grid-cols-3 items-start px-3 pt-2 pb-2 gap-1">
@@ -138,7 +140,7 @@ export default function InvoiceDetailPage() {
         )}
 
         {/* ── ITEMS TABLE ── */}
-        <table className="w-full border-collapse text-[12px]">
+        <table className="w-full border-collapse text-[12px] flex-1">
           <thead>
             <tr className="border-b border-gray-400 bg-[#f5f0d8]">
               <th className="border-r border-gray-300 py-1.5 px-2 text-center font-bold w-16">BOX</th>
