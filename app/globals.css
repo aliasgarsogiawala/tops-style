@@ -31,20 +31,27 @@ body {
     padding: 0 !important;
   }
 
-  /* The root flex layout: hide sidebar, make main fill full width */
-  body > * {
-    display: block !important;
+  /* Hide everything except the invoice */
+  body * {
+    visibility: hidden;
   }
 
-  /* Target the flex wrapper that holds sidebar + main */
-  .flex.min-h-screen {
-    display: block !important;
+  #invoice-doc,
+  #invoice-doc * {
+    visibility: visible;
+  }
+
+  #invoice-doc {
+    position: absolute;
+    left: 0;
+    top: 0;
   }
 
   /* The <main> content area should take full width */
   main {
     width: 100% !important;
     max-width: 100% !important;
+    margin-left: 0 !important;
     padding: 0 !important;
     overflow: visible !important;
   }
