@@ -18,10 +18,9 @@ body {
     display: block !important;
   }
 
-  /* Reset page */
   @page {
     size: A5 portrait;
-    margin: 6mm 6mm 6mm 6mm;
+    margin: 6mm;
   }
 
   html,
@@ -31,7 +30,7 @@ body {
     padding: 0 !important;
   }
 
-  /* Hide everything except the invoice */
+  /* Hide everything, then reveal only the invoice */
   body * {
     visibility: hidden;
   }
@@ -41,13 +40,19 @@ body {
     visibility: visible;
   }
 
+  /* Pull the invoice to the top-left of the page */
   #invoice-doc {
     position: absolute;
     left: 0;
     top: 0;
+    width: 100% !important;
+    min-height: auto !important;
+    border: none !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
   }
 
-  /* The <main> content area should take full width */
+  /* Reset the main content area */
   main {
     width: 100% !important;
     max-width: 100% !important;
@@ -56,16 +61,6 @@ body {
     overflow: visible !important;
   }
 
-  /* Invoice document fills the page */
-  #invoice-doc {
-    width: 100% !important;
-    min-height: auto !important;
-    border: none !important;
-    box-shadow: none !important;
-    page-break-inside: avoid;
-  }
-
-  /* The wrapper div around invoice-doc */
   #invoice-doc-wrapper {
     padding: 0 !important;
     max-width: 100% !important;

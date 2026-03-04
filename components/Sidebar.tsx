@@ -23,7 +23,7 @@ export default function Sidebar() {
   return (
     <aside className="no-print w-64 bg-zinc-950 border-r border-zinc-800 text-white flex flex-col h-screen fixed top-0 left-0 shadow-sm z-50">
       {/* Logo */}
-      <div className="p-6 border-b border-zinc-700">
+      <div className="p-6 border-b border-zinc-700 shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-zinc-400 rounded-full flex items-center justify-center">
             <Gem className="w-5 h-5 text-zinc-900" />
@@ -36,7 +36,7 @@ export default function Sidebar() {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {navItems.map(({ href, label, icon: Icon }) => {
           const active =
             href === "/"
