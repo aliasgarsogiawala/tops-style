@@ -51,7 +51,7 @@ export default function InvoiceDetailPage() {
       body > div { display: block !important; min-height: 0 !important; }
       main { display: block !important; width: 100% !important; max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
       #invoice-doc-wrapper { padding: 0 !important; max-width: 100% !important; margin: 0 !important; }
-      #invoice-doc { width: 100% !important; min-height: 0 !important; border: none !important; box-shadow: none !important; font-family: Georgia, serif !important; }
+      #invoice-doc { width: 100% !important; min-height: 0 !important; border: none !important; box-shadow: none !important; font-family: "Tempus Sans ITC", "TempusSansITC", "Segoe UI", "Trebuchet MS", "Gill Sans", sans-serif !important; }
     `;
     document.head.appendChild(style);
 
@@ -88,15 +88,18 @@ export default function InvoiceDetailPage() {
       {/* ── INVOICE DOCUMENT ── */}
       <div
         id="invoice-doc"
-        className="bg-[#fdfbf0] border border-gray-300 font-serif text-[13px] text-gray-900"
+        className="bg-[#fdfbf0] border border-gray-300 font-tempus text-[13px] text-gray-900"
       >
         {/* ── TOP HEADER ── */}
         <div className="border-b border-gray-400 grid grid-cols-3 items-start px-3 pt-2 pb-2 gap-1">
-          {/* Left: address */}
+          {/* Left: address + customer name */}
           <div className="text-[10px] leading-snug text-gray-600">
             <p>5th navyug hill road,</p>
             <p>S/77 Ingalal mansion,</p>
             <p>sandhurst road, Mumbai.</p>
+            {invoice.customerPhone && (
+              <p className="text-[10px] text-gray-500">{invoice.customerPhone}</p>
+            )}
           </div>
 
           {/* Center: invoice number + date */}
@@ -127,15 +130,12 @@ export default function InvoiceDetailPage() {
           </div>
         </div>
 
-        {/* ── PARTY NAME ── */}
-        <div className="border-b border-gray-400 py-1.5 px-3 text-center">
-          <p className="text-base font-bold tracking-wide uppercase">
-            {invoice.customerName || "——"}
-          </p>
-          {invoice.customerPhone && (
-            <p className="text-[11px] text-gray-500">{invoice.customerPhone}</p>
-          )}
-        </div>
+        {/* ── CUSTOMER NAME ROW ── */}
+        {invoice.customerName && (
+          <div className="border-b border-gray-400 py-2 px-3 text-center text-[18px] font-bold text-gray-900 uppercase tracking-widest">
+            {invoice.customerName}
+          </div>
+        )}
 
         {/* ── ITEMS TABLE ── */}
         <table className="w-full border-collapse text-[12px]">

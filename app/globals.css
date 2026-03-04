@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+/* TempusSans ITC — system font on Windows; graceful fallback for Mac/Linux */
+@font-face {
+  font-family: "TempusSansITC";
+  src: local("Tempus Sans ITC"), local("TempusSansITC");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.font-tempus {
+  font-family: "TempusSansITC", "Segoe UI", "Trebuchet MS", "Gill Sans", sans-serif;
+}
+
 :root {
   --background: #fffbeb;
   --foreground: #1c1917;
