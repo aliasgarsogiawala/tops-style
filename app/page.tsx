@@ -1,65 +1,50 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { getProducts, getInvoices } from "@/lib/storage";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
 import { Package, FileText, IndianRupee, TrendingUp, Plus, ArrowRight } from "lucide-react";
 
 export default function Dashboard() {
-  const [stats, setStats] = useState({
-    totalProducts: 0,
-    totalInvoices: 0,
-    totalRevenue: 0,
-    todayRevenue: 0,
-  });
-  const [recentInvoices, setRecentInvoices] = useState<ReturnType<typeof getInvoices>>([]);
+  const products = useQuery(api.products.list);
+  const invoices = useQuery(api.invoices.list);
 
-  useEffect(() => {
-    const products = getProducts();
-    const invoices = getInvoices();
-    const today = new Date().toDateString();
+  const loading = products === undefined || invoices === undefined;
 
-    const totalRevenue = invoices.reduce((sum, inv) => sum + inv.grandTotal, 0);
-    const todayRevenue = invoices
-      .filter((inv) => new Date(inv.createdAt).toDateString() === today)
-      .reduce((sum, inv) => sum + inv.grandTotal, 0);
+  const today = new Date().toDateString();
+  const totalRevenue = (invoices ?? []).reduce((sum, inv) => sum + inv.grandTotal, 0);
+  const todayRevenue = (invoices ?? [])
+    .filter((inv) => new Date(inv._creationTime).toDateString() === today)
+    .reduce((sum, inv) => sum + inv.grandTotal, 0);
 
-    setStats({
-      totalProducts: products.length,
-      totalInvoices: invoices.length,
-      totalRevenue,
-      todayRevenue,
-    });
-
-    setRecentInvoices(invoices.slice(-5).reverse());
-  }, []);
+  const recentInvoices = (invoices ?? []).slice(0, 5);
 
   const statCards = [
     {
       label: "Total Products",
-      value: stats.totalProducts,
+      value: loading ? "—" : (products ?? []).length,
       icon: Package,
       color: "bg-zinc-100 text-zinc-700",
       iconBg: "bg-zinc-200",
     },
     {
       label: "Total Invoices",
-      value: stats.totalInvoices,
+      value: loading ? "—" : (invoices ?? []).length,
       icon: FileText,
       color: "bg-zinc-100 text-zinc-700",
       iconBg: "bg-zinc-200",
     },
     {
       label: "Total Revenue",
-      value: formatCurrency(stats.totalRevenue),
+      value: loading ? "—" : formatCurrency(totalRevenue),
       icon: IndianRupee,
       color: "bg-zinc-100 text-zinc-700",
       iconBg: "bg-zinc-200",
     },
     {
       label: "Today's Revenue",
-      value: formatCurrency(stats.todayRevenue),
+      value: loading ? "—" : formatCurrency(todayRevenue),
       icon: TrendingUp,
       color: "bg-zinc-100 text-zinc-700",
       iconBg: "bg-zinc-200",
@@ -135,7 +120,11 @@ export default function Dashboard() {
           </Link>
         </div>
 
-        {recentInvoices.length === 0 ? (
+        {loading ? (
+          <div className="p-12 text-center text-zinc-400">
+            <p className="font-medium">Loading...</p>
+          </div>
+        ) : recentInvoices.length === 0 ? (
           <div className="p-12 text-center text-zinc-400">
             <FileText className="w-12 h-12 mx-auto mb-3 opacity-40" />
             <p className="font-medium">No invoices yet</p>
@@ -144,15 +133,15 @@ export default function Dashboard() {
         ) : (
           <div className="divide-y divide-zinc-50">
             {recentInvoices.map((inv) => (
-              <div key={inv.id} className="flex items-center justify-between p-4 hover:bg-zinc-50 transition-colors">
+              <div key={inv._id} className="flex items-center justify-between p-4 hover:bg-zinc-50 transition-colors">
                 <div>
                   <p className="font-medium text-zinc-900">{inv.invoiceNumber}</p>
                   <p className="text-sm text-zinc-600">{inv.customerName || "Walk-in Customer"}</p>
-                  <p className="text-xs text-zinc-400">{formatDateTime(inv.createdAt)}</p>
+                  <p className="text-xs text-zinc-400">{formatDateTime(new Date(inv._creationTime).toISOString())}</p>
                 </div>
                 <div className="text-right">
                   <p className="font-semibold text-zinc-900">{formatCurrency(inv.grandTotal)}</p>
-                  <p className="text-xs text-white0">{inv.items.length} item(s)</p>
+                  <p className="text-xs text-zinc-400">{inv.items.length} item(s)</p>
                 </div>
               </div>
             ))}

@@ -1,13 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  getProducts,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-} from "@/lib/storage";
-import { Product } from "@/lib/types";
+import { useState } from "react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { formatCurrency } from "@/lib/utils";
 import { Plus, Pencil, Trash2, Search, X, Check, Package } from "lucide-react";
 
@@ -19,16 +15,17 @@ interface FormState {
 const emptyForm: FormState = { code: "", price: "" };
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const products = useQuery(api.products.list) ?? [];
+  const addProduct = useMutation(api.products.add);
+  const updateProduct = useMutation(api.products.update);
+  const removeProduct = useMutation(api.products.remove);
+
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [editId, setEditId] = useState<string | null>(null);
+  const [editId, setEditId] = useState<Id<"products"> | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [error, setError] = useState("");
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-
-  const load = () => setProducts(getProducts());
-  useEffect(() => load(), []);
+  const [deleteConfirm, setDeleteConfirm] = useState<Id<"products"> | null>(null);
 
   const filtered = products.filter((p) =>
     p.code.toLowerCase().includes(search.toLowerCase())
@@ -41,37 +38,35 @@ export default function ProductsPage() {
     setShowForm(true);
   }
 
-  function openEdit(p: Product) {
+  function openEdit(p: (typeof products)[0]) {
     setForm({ code: p.code, price: String(p.price) });
-    setEditId(p.id);
+    setEditId(p._id);
     setError("");
     setShowForm(true);
   }
 
-  function handleSave() {
+  async function handleSave() {
     if (!form.code.trim()) { setError("Product code is required"); return; }
     const price = parseFloat(form.price);
     if (isNaN(price) || price < 0) { setError("Enter a valid price"); return; }
 
     const existing = products.find(
-      (p) => p.code.toLowerCase() === form.code.trim().toLowerCase() && p.id !== editId
+      (p) => p.code.toLowerCase() === form.code.trim().toLowerCase() && p._id !== editId
     );
     if (existing) { setError("Product code already exists"); return; }
 
     if (editId) {
-      updateProduct(editId, { code: form.code.trim().toUpperCase(), price });
+      await updateProduct({ id: editId, code: form.code.trim().toUpperCase(), price });
     } else {
-      addProduct({ code: form.code.trim().toUpperCase(), price });
+      await addProduct({ code: form.code.trim().toUpperCase(), price });
     }
-    load();
     setShowForm(false);
     setEditId(null);
     setForm(emptyForm);
   }
 
-  function handleDelete(id: string) {
-    deleteProduct(id);
-    load();
+  async function handleDelete(id: Id<"products">) {
+    await removeProduct({ id });
     setDeleteConfirm(null);
   }
 
@@ -133,7 +128,7 @@ export default function ProductsPage() {
             </thead>
             <tbody className="divide-y divide-zinc-50">
               {filtered.map((p) => (
-                <tr key={p.id} className="hover:bg-zinc-50 transition-colors">
+                <tr key={p._id} className="hover:bg-zinc-50 transition-colors">
                   <td className="p-4">
                     <span className="bg-zinc-100 text-zinc-900 font-mono font-semibold text-sm px-2.5 py-1 rounded-lg">
                       {p.code}
@@ -152,7 +147,7 @@ export default function ProductsPage() {
                         <Pencil className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => setDeleteConfirm(p.id)}
+                        onClick={() => setDeleteConfirm(p._id)}
                         className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         title="Delete"
                       >

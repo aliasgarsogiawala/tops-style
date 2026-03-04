@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getInvoices } from "@/lib/storage";
-import { Invoice } from "@/lib/types";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { formatDate, formatCurrency } from "@/lib/utils";
 import { ArrowLeft, Printer } from "lucide-react";
 import Link from "next/link";
@@ -11,16 +11,18 @@ import Link from "next/link";
 export default function InvoiceDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const [invoice, setInvoice] = useState<Invoice | null>(null);
+  const invoice = useQuery(
+    api.invoices.getById,
+    params.id ? { id: params.id as Id<"invoices"> } : "skip"
+  );
 
-  useEffect(() => {
-    const invoices = getInvoices();
-    const found = invoices.find((inv) => inv.id === params.id);
-    if (found) setInvoice(found);
-    else router.push("/invoices");
-  }, [params.id, router]);
+  // If query returned null (not found), redirect
+  if (invoice === null) {
+    router.push("/invoices");
+    return null;
+  }
 
-  if (!invoice) {
+  if (invoice === undefined) {
     return (
       <div className="p-8 text-center text-zinc-400">
         <p>Loading invoice...</p>
@@ -73,11 +75,11 @@ export default function InvoiceDetailPage() {
               {invoice.invoiceNumber}
             </p>
             <p className="text-lg font-bold text-gray-800 leading-tight">
-              {formatDate(invoice.createdAt)}
+              {formatDate(new Date(invoice._creationTime).toISOString())}
             </p>
             <p className="text-[10px] text-gray-500 mt-0.5">
               DATE:&nbsp;
-              <span className="underline">{formatDate(invoice.createdAt)}</span>
+              <span className="underline">{formatDate(new Date(invoice._creationTime).toISOString())}</span>
             </p>
           </div>
 

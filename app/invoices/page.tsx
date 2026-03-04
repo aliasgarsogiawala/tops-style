@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { getInvoices, deleteInvoice } from "@/lib/storage";
-import { Invoice } from "@/lib/types";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
 import {
   Search,
@@ -15,12 +16,11 @@ import {
 } from "lucide-react";
 
 export default function InvoicesPage() {
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [search, setSearch] = useState("");
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const invoices = useQuery(api.invoices.list) ?? [];
+  const removeInvoice = useMutation(api.invoices.remove);
 
-  const load = () => setInvoices(getInvoices().slice().reverse());
-  useEffect(() => load(), []);
+  const [search, setSearch] = useState("");
+  const [deleteConfirm, setDeleteConfirm] = useState<Id<"invoices"> | null>(null);
 
   const filtered = invoices.filter(
     (inv) =>
@@ -29,9 +29,8 @@ export default function InvoicesPage() {
       inv.customerPhone.includes(search)
   );
 
-  function handleDelete(id: string) {
-    deleteInvoice(id);
-    load();
+  async function handleDelete(id: Id<"invoices">) {
+    await removeInvoice({ id });
     setDeleteConfirm(null);
   }
 
@@ -100,13 +99,13 @@ export default function InvoicesPage() {
             </thead>
             <tbody className="divide-y divide-zinc-50">
               {filtered.map((inv) => (
-                <tr key={inv.id} className="hover:bg-zinc-50 transition-colors">
+                <tr key={inv._id} className="hover:bg-zinc-50 transition-colors">
                   <td className="p-4">
                     <span className="font-mono font-semibold text-zinc-900 bg-zinc-100 px-2.5 py-1 rounded-lg text-sm">
                       {inv.invoiceNumber}
                     </span>
                   </td>
-                  <td className="p-4 text-zinc-700 text-sm">{formatDateTime(inv.createdAt)}</td>
+                  <td className="p-4 text-zinc-700 text-sm">{formatDateTime(new Date(inv._creationTime).toISOString())}</td>
                   <td className="p-4 text-center text-zinc-700 text-sm">{inv.items.length}</td>
                   <td className="p-4 text-right font-bold text-zinc-900">
                     {formatCurrency(inv.grandTotal)}
@@ -114,14 +113,14 @@ export default function InvoicesPage() {
                   <td className="p-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Link
-                        href={`/invoices/${inv.id}`}
+                        href={`/invoices/${inv._id}`}
                         className="p-2 text-white0 hover:text-zinc-700 hover:bg-zinc-100 rounded-lg transition-colors"
                         title="View"
                       >
                         <Eye className="w-4 h-4" />
                       </Link>
                       <button
-                        onClick={() => setDeleteConfirm(inv.id)}
+                        onClick={() => setDeleteConfirm(inv._id)}
                         className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         title="Delete"
                       >

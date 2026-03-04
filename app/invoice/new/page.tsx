@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getProductByCode, getProducts, addInvoice } from "@/lib/storage";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { formatCurrency } from "@/lib/utils";
-import { Product, InvoiceItem } from "@/lib/types";
+import { InvoiceItem } from "@/lib/types";
 import { Plus, Search, ArrowRight, CheckCircle, X, Gem } from "lucide-react";
 
 const PCS_PER_BOX = 12;
@@ -14,6 +15,9 @@ export default function NewInvoicePage() {
   const boxInputRef = useRef<HTMLInputElement>(null);
   const codeInputRef = useRef<HTMLInputElement>(null);
 
+  const allProducts = useQuery(api.products.list) ?? [];
+  const addInvoice = useMutation(api.invoices.add);
+
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [notes, setNotes] = useState("");
@@ -22,40 +26,19 @@ export default function NewInvoicePage() {
   const [boxInput, setBoxInput] = useState("");
   const [codeInput, setCodeInput] = useState("");
   const [codeError, setCodeError] = useState("");
-  const [foundProduct, setFoundProduct] = useState<Product | null>(null);
 
   const [items, setItems] = useState<InvoiceItem[]>([]);
   const [saved, setSaved] = useState(false);
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [suggestions, setSuggestions] = useState<Product[]>([]);
 
-  useEffect(() => {
-    setAllProducts(getProducts());
-    boxInputRef.current?.focus();
-  }, []);
+  const val = codeInput.trim().toUpperCase();
+  const foundProduct = val
+    ? allProducts.find((p) => p.code.toUpperCase() === val) ?? null
+    : null;
+  const suggestions = val && !foundProduct
+    ? allProducts.filter((p) => p.code.startsWith(val)).slice(0, 5)
+    : [];
 
-  // Live code lookup + suggestions
-  useEffect(() => {
-    const val = codeInput.trim().toUpperCase();
-    if (!val) {
-      setFoundProduct(null);
-      setCodeError("");
-      setSuggestions([]);
-      return;
-    }
-    const exact = getProductByCode(val);
-    if (exact) {
-      setFoundProduct(exact);
-      setCodeError("");
-      setSuggestions([]);
-    } else {
-      setFoundProduct(null);
-      setCodeError("");
-      setSuggestions(allProducts.filter((p) => p.code.startsWith(val)).slice(0, 5));
-    }
-  }, [codeInput, allProducts]);
-
-  function addItem(product?: Product) {
+  function addItem(product?: (typeof allProducts)[0] | null) {
     const p = product || foundProduct;
     const box = parseInt(boxInput);
     if (!box || box <= 0) { setCodeError("Enter a valid box number"); return; }
@@ -82,8 +65,6 @@ export default function NewInvoicePage() {
     }
     setBoxInput("");
     setCodeInput("");
-    setFoundProduct(null);
-    setSuggestions([]);
     setCodeError("");
     boxInputRef.current?.focus();
   }
@@ -109,9 +90,9 @@ export default function NewInvoicePage() {
 
   const grossTotal = items.reduce((s, i) => s + i.total, 0);
 
-  function handleSave() {
+  async function handleSave() {
     if (items.length === 0) return;
-    const inv = addInvoice({
+    const id = await addInvoice({
       customerName: customerName.trim(),
       customerPhone: customerPhone.trim(),
       items,
@@ -122,7 +103,7 @@ export default function NewInvoicePage() {
       notes: notes.trim(),
     });
     setSaved(true);
-    setTimeout(() => router.push(`/invoices/${inv.id}`), 1200);
+    setTimeout(() => router.push(`/invoices/${id}`), 1200);
   }
 
   return (
@@ -237,8 +218,8 @@ export default function NewInvoicePage() {
                 <div className="absolute z-10 left-[calc(7rem+0.75rem)] right-[calc(7rem+8rem+2*0.75rem+5rem)] mt-1 bg-white border border-zinc-200 rounded-xl shadow-lg overflow-hidden">
                   {suggestions.map((s) => (
                     <button
-                      key={s.id}
-                      onClick={() => { setCodeInput(s.code); setSuggestions([]); codeInputRef.current?.focus(); }}
+                      key={s._id}
+                      onClick={() => { setCodeInput(s.code); codeInputRef.current?.focus(); }}
                       className="w-full text-left px-4 py-3 hover:bg-zinc-50 flex items-center justify-between border-b border-zinc-50 last:border-0 transition-colors"
                     >
                       <span className="font-mono font-semibold text-zinc-900 text-sm bg-zinc-100 px-2 py-0.5 rounded">
