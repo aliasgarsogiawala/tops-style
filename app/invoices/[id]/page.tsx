@@ -8,6 +8,7 @@ import { formatDate, formatCurrency } from "@/lib/utils";
 import { InvoiceItem } from "@/lib/types";
 import { ArrowLeft, Printer } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 
 export default function InvoiceDetailPage() {
   const params = useParams();
@@ -16,6 +17,27 @@ export default function InvoiceDetailPage() {
     api.invoices.getById,
     params.id ? { id: params.id as Id<"invoices"> } : "skip"
   );
+
+  const docRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  // Scale invoice to fit container width on small screens
+  useEffect(() => {
+    function scaleInvoice() {
+      const doc = docRef.current;
+      const wrap = wrapRef.current;
+      if (!doc || !wrap) return;
+      const containerWidth = wrap.clientWidth;
+      const docWidth = doc.scrollWidth;
+      const scale = containerWidth < docWidth ? containerWidth / docWidth : 1;
+      doc.style.transform = `scale(${scale})`;
+      doc.style.transformOrigin = "top left";
+      wrap.style.height = scale < 1 ? `${doc.scrollHeight * scale}px` : "";
+    }
+    scaleInvoice();
+    window.addEventListener("resize", scaleInvoice);
+    return () => window.removeEventListener("resize", scaleInvoice);
+  }, [invoice]);
 
   // If query returned null (not found), redirect
   if (invoice === null) {
@@ -68,30 +90,35 @@ export default function InvoiceDetailPage() {
   }
 
   return (
-    <div id="invoice-doc-wrapper" className="p-6 max-w-3xl mx-auto">
+    <div id="invoice-doc-wrapper" className="p-2 sm:p-6 max-w-3xl mx-auto">
       {/* Actions — hidden on print */}
-      <div id="__print_hide__" className="flex items-center justify-between mb-5">
+      <div id="__print_hide__" className="flex items-center justify-between mb-4">
         <Link
           href="/invoices"
-          className="flex items-center gap-2 text-zinc-700 hover:text-zinc-900 font-medium transition-colors"
+          className="flex items-center gap-2 text-zinc-700 hover:text-zinc-900 font-medium transition-colors text-sm"
         >
           <ArrowLeft className="w-4 h-4" /> Back
         </Link>
         <button
           onClick={handlePrint}
-          className="flex items-center gap-2 bg-zinc-900 text-white px-5 py-2.5 rounded-xl hover:bg-zinc-700 transition-colors font-medium shadow"
+          className="flex items-center gap-2 bg-zinc-900 text-white px-4 py-2 rounded-xl hover:bg-zinc-700 transition-colors font-medium shadow text-sm"
         >
           <Printer className="w-4 h-4" />
           Print / Save PDF
         </button>
       </div>
 
-      {/* ── INVOICE DOCUMENT ── */}
-      <div
-        id="invoice-doc"
-        className="bg-[#fdfbf0] border border-gray-300 font-tempus text-[13px] text-gray-900 flex flex-col"
-        style={{ minHeight: "257mm" }}
-      >
+      {/* ── INVOICE DOCUMENT — scales down on small screens ── */}
+      <div ref={wrapRef} className="w-full overflow-x-hidden">
+        <div
+          ref={docRef}
+          id="invoice-doc"
+          className="bg-[#fdfbf0] border border-gray-300 font-tempus text-[13px] text-gray-900 flex flex-col origin-top-left"
+          style={{
+            width: "148mm",
+            minHeight: "257mm",
+          }}
+        >
         {/* ── TOP HEADER ── */}
         <div className="border-b border-gray-400 grid grid-cols-3 items-start px-3 pt-2 pb-2 gap-1">
           {/* Left: address + customer name */}
@@ -190,7 +217,8 @@ export default function InvoiceDetailPage() {
             {invoice.notes}
           </div>
         )}
-      </div>
+        </div>{/* end #invoice-doc */}
+      </div>{/* end overflow-x-auto */}
     </div>
   );
 }

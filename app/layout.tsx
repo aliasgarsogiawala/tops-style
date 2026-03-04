@@ -22,7 +22,7 @@ export default function RootLayout({
         <ConvexClientProvider>
           <div className="flex min-h-screen">
             <Sidebar />
-            <main className="flex-1 overflow-auto ml-64">
+            <main className="flex-1 overflow-auto md:ml-64 pt-14 md:pt-0">
               {children}
             </main>
           </div>
